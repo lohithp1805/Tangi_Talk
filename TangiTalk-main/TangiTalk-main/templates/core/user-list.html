@@ -1,0 +1,38 @@
+{% load last_message %}
+<div class="d-flex align-items-center" style="justify-content: space-between;">
+  <span class="mt-2 mb-3" style="font-size: x-large;font-weight: bold;color: rgb(81, 81, 81);">Users</span>
+  <a href="{% url 'profile_detail' request.user.pk %}">
+  {% if request.user.profile.image %}
+      <img id="sender-profile-photo" src="../../media/{{ request.user.profile.image }}"
+          class="rounded-circle ml-2" style="width: 35px; height: 35px;" />
+  {% else %}
+      <img id="sender-profile-photo" src="../../media/default_profile.png"
+          class="rounded-circle ml-2" style="width: 35px; height: 35px;" />
+  {% endif %}
+  </a>
+</div>
+<div class="user-list">
+  {% for user in users %}
+  <a class="user d-block mb-2 py-2 {% if user.username == request.path|slice:"6:"|slice:"-1" %}active{% endif %}" href="{% url 'chat' user %}">
+      <div class="d-flex align-items-center gap-2">
+        {% if user.profile.image %}
+        <img id="sender-profile-photo" src="../../media/{{ user.profile.image }}"
+          style="width: 50px; height: 50px; border-radius: 50%;" />
+        {% else %}
+        <img id="sender-profile-photo" src="../../media/default_profile.png"
+          style="width: 50px; height: 50px; border-radius: 60%;" />
+        {% endif %}
+        <div>
+          <span class="name d-block">{{user}}</span>
+          {% if user.last_message %}
+          <span id="last-message" class="message d-block">{{ user|last_message:request.user|truncatechars:15 }}</span>
+        {% else %}
+          <span id="last-message" class="message d-block">Last message goes here</span>
+        {% endif %}        
+        </div>
+      </div>
+    </a>
+    <div class="separator mb-2"></div>
+  {% endfor %}
+</div>
+<a class="logout btn btn-sm btn-secondary" href="{% url 'logout' %}">Logout</a>

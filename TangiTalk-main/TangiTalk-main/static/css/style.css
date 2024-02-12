@@ -1,0 +1,217 @@
+/* Set background color and font styles for the entire page */
+body {
+  background-color: #f8f8f8;
+  font-family: Arial, sans-serif;
+}
+
+.inner {
+  height: 80vh;
+}
+
+/* Apply styles to the user list section */
+.user-list {
+  position: relative;
+  overflow: auto;
+}
+
+.user-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.user-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.user-list::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.user-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.user-list .user {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.user-list .user.active {
+  background-color: #e2e2e2;
+}
+
+.user-list .user .avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #555;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #fff;
+  font-size: 20px;
+}
+
+.user-list .user .name {
+  margin-left: 10px;
+  color: #333;
+  font-weight: bold;
+}
+
+.user-list .user .message {
+  margin-left: 10px;
+  color: #555;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.user-list .separator {
+  height: 1px;
+  width: 100%;
+  background-color: #eee;
+}
+
+/* Apply styles to the chat box section */
+.chat-box {
+  height: 100%;
+}
+
+.chat-box .chat {
+  height: 100%;
+  overflow: auto;
+  position: relative;
+  background: transparent;
+  background: #eee;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.chat .chat-header {
+  padding: 15px 20px;
+  border-bottom: 2px solid #f4f7f6
+}
+
+.chat .chat-header img {
+  float: left;
+  border-radius: 40px;
+  width: 40px
+}
+
+.chat .chat-header .chat-about {
+  float: left;
+  padding-left: 10px
+}
+
+.chat-box .chat .chat-log {
+  overflow-y: auto;
+  padding: 15px 7px;
+  height: 63vh;
+}
+
+.chat-box .chat .chat-log::-webkit-scrollbar {
+  width: 5px;
+}
+
+.chat-box .chat .chat-log::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.chat-box .chat .chat-log::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.chat-box .chat .chat-log::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.chat-box .chat .input-box {
+  display: flex;
+  align-items: center;
+  background-color: #eee;
+  padding: 10px;
+}
+
+.chat-box .chat .input-box input[type="text"] {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.chat-box .chat .input-box button {
+  background-color: #3a3a3a;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.chat-box .chat .input-box button:disabled {
+  background-color: #717171e3;
+  cursor: not-allowed;
+}
+
+.chat-box .chat .message {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
+  justify-content: flex-start; /* Added */
+}
+
+.chat-box .chat .message.right {
+  justify-content: flex-start; /* Added */
+  flex-direction: row-reverse;
+}
+
+.chat-box .chat .message .avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #fff;
+  font-size: 16px;
+}
+
+.chat-box .chat .message.right .avatar {
+  background-color: #2ecc71;
+}
+
+.chat-box .chat .message.left .avatar {
+  background-color: #3498db;
+}
+
+.chat-box .chat .message span {
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  color: #333;
+  font-size: 14px;
+  max-width: 80%; /* Added */
+  word-wrap: break-word; /* Added */
+  overflow-wrap: break-word; /* Added */
+}
+
+/* Apply styles to the logout link */
+.logout {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  text-decoration: none;
+  /* color: #333; */
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
+}

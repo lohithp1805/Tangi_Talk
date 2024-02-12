@@ -1,0 +1,168 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-8 col-md-10 col-sm-12 mx-auto shadow chat-box rounded">
+    <div class="row inner">
+      <div class="col-lg-4" style="position: relative;">
+        {% include 'core/user-list.html' %}
+      </div>
+      <div class="col-lg-8 chat px-0">
+        <div style="background: rgb(177, 177, 177);border-radius: 0 5px 0 0;">
+          <div class="chat-header clearfix">
+            <div class="row">
+              <div class="col-lg-6" style="display: flex; align-items: center;">
+                <a href="" data-toggle="modal" data-target="#view_info">
+                  {% if user.profile.image %}
+                  <img id="sender-profile-photo" src="../../media/{{ user.profile.image }}"
+                    style="width: 50px; height: 50px; border-radius: 50%; display: block; margin: 0 auto;" />
+                  {% else %}
+                  <img id="sender-profile-photo" src="../../media/default_profile.png"
+                    style="width: 50px; height: 50px; border-radius: 50%; display: block; margin: 0 auto;" />
+                  {% endif %}
+                </a>
+                <div class="chat-about" style="margin-left: 10px;">
+                  <h6 style="color: azure; font-weight: bold; margin: 0;">{{ user.username }}</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="chat-log" class="chat-log px-3 scroll">
+          {% for chat in chats %}
+          <div class="message mb-2 {% if chat.sender == request.user %}right{% else %}left{% endif %}">
+            <div class="avatar" data-user="{{ chat.sender.username }}">{{chat.sender.username|first|upper}}</div>
+            <span title="{{chat.timestamp}}" class="d-block pb-1 pr-0 m-0">{{chat.message}}
+              <span class="timestamp px-0"
+                style="font-size: x-small;color:gray;margin-left: 10px;background: none;">{{chat.timestamp|time:"H:i"}}</span>
+            </span>
+          </div>
+          {% endfor %}
+        </div>
+        <form method="post" class="input-box d-flex w-100">
+          {% csrf_token %}
+          <input type="text" id="chat-message-input" class="form-control" name="" id="">
+          <button id="chat-message-submit" type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Profile Modal -->
+<div id="profileModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content px-3">
+      <div class="modal-header">
+        <h5 class="modal-title">{{user.username}}</h5>
+      </div>
+      <div class="modal-body">
+        <!-- Profile content goes here -->
+        {% if user.profile.image %}
+        <img id="sender-profile-photo" src="../../media/{{ user.profile.image }}"
+          style="height: 25vh;margin-left: 100px;" />
+        {% else %}
+        <img id="sender-profile-photo" src="../../media/default_profile.png" style="height: 25vh;margin-left: 100px;" />
+        {% endif %}
+        <hr>
+        <div class="name">First name: {{user.first_name}}</div>
+        <div class="name">Last name: {{user.last_name}}</div>
+        <div class="status">Last logged on: {{user.last_login|time:"H:i"}}</div>
+        <div class="email">e-Mail Id: {{user.email}}</div>
+        {% if user.profile.description %}
+        <div class="description">Description: {{user.profile.description}}</div>
+        {% else %}
+        <div class="description">Description:No description</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+
+<script>
+
+  let chatLog = document.getElementById('chat-log');
+  let messageInput = document.getElementById('chat-message-input');
+  let messageSubmit = document.getElementById('chat-message-submit');
+  let lastMessage = document.getElementById('last-message');
+  let roomName = "{{room_name}}";
+  let user = "{{request.user.username}}"
+  function scrollToBottom() {
+    chatLog.scrollTo({
+      top: chatLog.scrollHeight,
+      behavior: 'smooth'
+    });
+  }
+
+  const chatSocket = new WebSocket(
+    `ws://${window.location.host}/ws/chat/${roomName}/`
+  )
+
+  chatSocket.onmessage = e => {
+    const data = JSON.parse(e.data);
+    var today = new Date();
+    var time = today.getHours() + ":" + today.getMinutes();
+    var html = `
+      <div class="message mb-2 ${data.sender === user ? 'right' : 'left'}">
+            <div class="avatar">${data.sender[0].toUpperCase()}</div>
+            <span title="timestamp" class="d-block pb-1 pr-0 m-0">${data.message}
+              <span class="timestamp px-0"
+                style="font-size: x-small;color:gray;margin-left: 10px;background: none;">${time}</span>
+            </span>
+          </div>
+    `;
+    chatLog.insertAdjacentHTML("beforeend", html);
+    lastMessage
+    scrollToBottom();
+  }
+
+  window.onload = function () {
+    scrollToBottom();
+  };
+
+  chatSocket.onclose = e => {
+    console.error('Chat socket closed unexpectedly');
+  }
+
+  messageSubmit.disabled = true;
+  messageInput.addEventListener('input', function () {
+    if (messageInput.value.trim() !== '') {
+      messageSubmit.disabled = false;
+    } else {
+      messageSubmit.disabled = true;
+    }
+  })
+
+  messageInput.focus();
+  messageSubmit.onclick = e => {
+    e.preventDefault();
+
+    const message = messageInput.value;
+    if (message != "") {
+      chatSocket.send(JSON.stringify({
+        'message': message
+      }));
+      messageInput.value = '';
+    }
+  }
+  chatLog.addEventListener('scroll', function () {
+    chatLog.classList.add('scroll');
+  });
+  setTimeout(function () {
+    chatLog.classList.remove('scroll');
+  }, 1000);
+
+  $(document).ready(function () {
+    // Open profile modal when profile is clicked
+    $('.chat-header img').click(function (e) {
+      e.preventDefault();
+      $('#profileModal').modal('show');
+    });
+  });
+</script>
+
+{% endblock extra_js %}

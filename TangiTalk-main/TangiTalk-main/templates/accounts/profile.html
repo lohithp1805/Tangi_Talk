@@ -1,0 +1,154 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block styles %}
+<style>
+  body {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+
+  .profile-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-form-container {
+    background-color: #f5f5f5;
+    padding: 30px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-container .profile-card,
+  .profile-form-container {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .profile-container .card-title,
+  .profile-form-container .card-title {
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .profile-container p {
+    color: #777;
+    margin-bottom: 10px;
+  }
+
+  .no-profile-message {
+    color: #777;
+  }
+
+  .profile-form-container h3.card-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .profile-form-container .btn-primary {
+    margin-left: 10px;
+  }
+
+  .profile-container .card-text {
+    margin-bottom: 10px;
+  }
+
+  .profile-container .mb-3 {
+    margin-bottom: 20px;
+  }
+
+  .profile-container .profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-container {
+    display: flex;
+    align-items: flex-start;
+    height: 100%;
+  }
+
+  .profile-card {
+    width: 100%;
+  }
+
+  .profile-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .profile-info {
+    flex: 1;
+  }
+
+  .profile-image-container {
+    flex: 1;
+    text-align: right;
+  }
+
+  .profile-image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .profile-description {
+    margin-top: 10px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="profile-form-container">
+        <h3 class="card-title">
+          Profile Form
+          <a href="{% url 'index' %}" class="btn btn-primary float-right">Back</a>
+        </h3>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="profile-container" style="height:100%">
+        {% if profile %}
+        <div class="card profile-card" style="height: 100%;justify-content: space-between;padding: 3vh;">
+          <h3 class="card-title">Profile Detail</h3>
+          <div class="profile-content" style="align-items: center;flex-wrap: wrap;">
+            <div class="profile-info" style="margin: auto;padding-left: 4vh;">
+              <p class="card-text">Username: {{ profile.user.username }}</p>
+              <p class="card-text">Full Name: {{ profile.user.get_full_name }}</p>
+            </div>
+            {% if profile.image %}
+            <img src="{{ profile.image.url }}" alt="Profile Image" class="profile-image">
+            {% endif %}
+          </div>
+          <p class="card-text profile-description text-muted"
+            style="height: 30vh;border: 1px dotted gray;border-radius: 20px;padding: 15px;"><span style="color: gray;font-weight: bold;">Description:</span> {{ profile.description }}</p>
+        </div>
+        {% else %}
+        <div class="card profile-card">
+          <div class="card-body">
+            <p class="no-profile-message">No profile found.</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
